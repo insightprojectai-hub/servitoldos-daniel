@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Genera PUBLICACION.md (títulos, descripciones con capítulos, etiquetas,
 horario) y la carpeta guiones/ a partir de videos.py + meta.json del render."""
-import os, json
+import os, json, re
 from videos import VIDEOS, CHANNEL
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -59,7 +59,7 @@ def main():
     for vid in order:
         v = next(x for x in VIDEOS if x["id"] == vid)
         m = metas[vid]
-        md.append(f"| {vid[:2]} | {v['title']} | {ts(m['duration']) if m else '?'} | {SCHEDULE[vid]} |")
+        md.append(f"| {vid[:2]} | {v['title'].replace('|', '\\|')} | {ts(m['duration']) if m else '?'} | {SCHEDULE[vid]} |")
     md.append("")
     for v in VIDEOS:
         m = metas[v["id"]]
@@ -71,9 +71,15 @@ def main():
         chapters = ""
         if m:
             seen = set(); ch = []
-            for t, name in m["chapters"]:
-                name = name.strip()
-                name = name[0] + name[1:].lower() if name.isupper() else name
+            for (t, name), scx in zip(m["chapters"], v["scenes"]):
+                name = (scx.get("label") if scx["type"] == "stat" else name).strip()
+                if sum(c.isupper() for c in name) > sum(c.islower() for c in name):
+                    low = name.lower()
+                    i = next((k for k, ch_ in enumerate(low) if ch_.isalpha()), 0)
+                    name = low[:i] + low[i].upper() + low[i + 1:]
+                    for pn in ["Leonida", "GTA", "Vice City", "Xbox", "PS5", "PC", "Lucía", "Jason", "Duval", "Caminos",
+                               "España", "Nueva Zelanda", "Standard", "Ultimate", "Rockstar", "GB", "Series", "Pro", "TV"]:
+                        name = re.sub(r"\b" + re.escape(pn.lower()) + r"\b", pn, name, flags=re.I)
                 if name in seen:
                     continue
                 seen.add(name)

@@ -448,7 +448,7 @@ dict(
 dict(
  id="08-historia-espera",
  palette="miami",
- title="De 2013 a 2026: la LARGA espera de GTA 6 en 3 minutos",
+ title="De 2013 a 2026: la LARGA espera de GTA 6, resumida",
  thumb=dict(top="13 AÑOS", big="ESPERANDO", badge="2013→2026", note="LA HISTORIA DE GTA 6"),
  scenes=[
   dict(type="title", kicker="2013 → 2026", title="LA LARGA ESPERA", sub="Cómo hemos llegado hasta GTA 6", say=[
