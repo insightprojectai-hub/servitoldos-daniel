@@ -5,7 +5,7 @@ Paleta: miami · Miniatura: {'top': '13 AÑOS', 'big': 'ESPERANDO', 'badge': '20
 
 ## Escena 1: LA LARGA ESPERA (title) — 0:00
 
-**En pantalla:** {"kicker": "2013 → 2026", "title": "LA LARGA ESPERA", "sub": "Cómo hemos llegado hasta GTA 6"}
+**En pantalla:** {"kicker": "2013 · 2026", "title": "LA LARGA ESPERA", "sub": "Cómo hemos llegado hasta GTA 6"}
 
 **Locución:**
 
