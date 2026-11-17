@@ -133,3 +133,33 @@ def srt(t):
 
 if __name__ == "__main__":
     main()
+
+
+def shorts_pack():
+    from shorts_data import SHORTS
+    md = ["# Shorts verticales — publicación\n",
+          "Formato 1080×1920, menos de 60 s. Cada Short va media hora después de su vídeo largo.",
+          "En YouTube Studio, al subir cada Short, usa **«Vídeo relacionado»** para enlazar su vídeo largo: es lo que más tráfico manda al vídeo completo.\n",
+          "| Short | Duración | Vídeo largo relacionado | Publicar |", "|---|---|---|---|"]
+    body = []
+    for s in SHORTS:
+        mp = os.path.join(BUILD, s["id"], "meta.json")
+        dur = json.load(open(mp))["duration"] if os.path.exists(mp) else 0
+        when = SCHEDULE[s["long"]]
+        if when.startswith("MIÉRCOLES"):
+            when = "Miércoles 18 · 10:30"
+        else:
+            hh, mm = when.split("· ")[1].split(":")
+            m = int(hh) * 60 + int(mm) + 30
+            when = f"Jueves 19 · {m // 60:02d}:{m % 60:02d}"
+        md.append(f"| `shorts/{s['id']}.mp4` | {ts(dur)} | `{s['long']}` | {when} |")
+        hook = s["scenes"][0]["say"][0]
+        desc = (f"{hook}\n\nVídeo completo en el canal 👉 (enlázalo como «Vídeo relacionado»)\n\n"
+                f"#GTA6 #GTAVI #Leonida #shorts\n\n{DISCLAIMER}")
+        body += [f"\n---\n\n## {s['id']}\n", f"**Título**\n\n```\n{s['title']}\n```\n", f"**Descripción**\n\n```\n{desc}\n```\n"]
+    open(os.path.join(ROOT, "PUBLICACION_SHORTS.md"), "w").write("\n".join(md + body))
+    print("shorts ok")
+
+
+if __name__ == "__main__":
+    shorts_pack()

@@ -18,6 +18,7 @@ import music
 W, H = 1920, 1080
 FPS = 30
 HOR = 700  # línea del horizonte
+OUTRO_TAIL = 2.0
 FONT_DIR = os.environ.get("FONT_DIR", "/tmp/claude-0/fonts/")
 BUILD = os.environ.get("BUILD_DIR", "/tmp/claude-0/build/")
 OUT_VID = os.path.join(HERE, "..", "videos")
@@ -114,8 +115,8 @@ def build_background(pal, seed=7):
     sky = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     sd = ImageDraw.Draw(sky)
     city = hexc(pal["city"])
-    x = 250
-    while x < W - 250:
+    x = 250 if W >= 1920 else 30
+    while x < W - (250 if W >= 1920 else 30):
         w = int(rng.integers(40, 120)); h = int(rng.integers(50, 300))
         if abs(x - W / 2) < 300:
             h = int(h * 0.7)
@@ -132,9 +133,10 @@ def build_background(pal, seed=7):
     # palmeras
     pal_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     pd = ImageDraw.Draw(pal_layer)
-    draw_palm(pd, 150, H + 20, 760, lean=70, color=(5, 2, 12, 255), rng=rng)
-    draw_palm(pd, 40, H + 20, 560, lean=40, color=(5, 2, 12, 255), rng=rng)
-    draw_palm(pd, W - 140, H + 20, 820, lean=-80, color=(5, 2, 12, 255), rng=rng)
+    ps = H / 1080 if H > W else 1.0
+    draw_palm(pd, 150, H + 20, int(760 * ps), lean=70, color=(5, 2, 12, 255), rng=rng)
+    draw_palm(pd, 40, H + 20, int(560 * ps), lean=40, color=(5, 2, 12, 255), rng=rng)
+    draw_palm(pd, W - 140, H + 20, int(820 * ps), lean=-80, color=(5, 2, 12, 255), rng=rng)
     base = Image.alpha_composite(base, pal_layer)
     # línea de horizonte brillante
     hl = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -622,7 +624,7 @@ def prepare(video):
             t += dur + 0.32
         t += 0.35
         if sc["type"] == "outro":
-            t += 2.0
+            t += OUTRO_TAIL
         sc["_sent_starts"] = starts
         sc["_end"] = t
     total = t + 0.2
